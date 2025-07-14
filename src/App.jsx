@@ -18,7 +18,7 @@ export default function App() {
   }
 
 
-  const [dice, setDice] = useState(getNewDiceArr())
+  const [dice, setDice] = useState(() => getNewDiceArr())
 
   // check if we've won every render
   // - are all numbers the same
