@@ -1,5 +1,5 @@
 import Die from './components/Die'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Confetti from 'react-confetti'
 
 export default function App() {
@@ -26,12 +26,12 @@ export default function App() {
 
   let dieNum = dice[0].num
   let won = dice.every(die => die.num === dieNum && die.selected)
+  const buttonRef = useRef(null)
 
-  if (won) console.log("You won!")
-
+  if (won) { buttonRef.current.focus() }
 
   function getNum() {
-    return Math.floor(Math.random() * 6) + 1
+    return Math.ceil(Math.random() * 6)
   }
 
   function toggleSelected(id) {
@@ -59,21 +59,16 @@ export default function App() {
       <h1>Tenzies</h1>
       <p>Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
       <div className='dice-container'>
-        {dice.map(die => <Die die={die} toggle={toggleSelected} />)}
+        {dice.map(die => <Die die={die} toggle={toggleSelected} key={die.id} />)}
       </div>
-      {won ?
-        <button
-          className="roll-btn"
-          onClick={reset}>
-          New Game
-        </button> :
-        <button
-          className="roll-btn"
-          onClick={roll}>
-          Roll
-        </button>
-      }
+      <button
+        ref={buttonRef}
+        className="roll-btn"
+        onClick={won ? reset : roll}>
+        {won ? "New Game" : "Roll"}
+      </button>
       {won ? <Confetti /> : null}
+      {won ? <div aria-live="polite" className="sr-only">Congratulations, you won! Press new game to start again</div> : null}
     </main>
   )
 }
